@@ -1,3 +1,2 @@
-proj/
-build*/
-.vscode/
+/build*/
+/.cache
