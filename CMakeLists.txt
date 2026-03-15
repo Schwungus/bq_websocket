@@ -5,8 +5,12 @@ project(bq_websocket VERSION 0.1.0 LANGUAGES C)
 set(BUILD_SHARED_LIBS OFF)
 
 add_library(bq_websocket
+    ${CMAKE_CURRENT_SOURCE_DIR}/bq_websocket.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/bq_websocket.h
+
     ${CMAKE_CURRENT_SOURCE_DIR}/bq_websocket_platform.c
     ${CMAKE_CURRENT_SOURCE_DIR}/bq_websocket_platform.h)
+
 target_include_directories(bq_websocket PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 if(CMAKE_SYSTEM_NAME MATCHES "Emscripten")
