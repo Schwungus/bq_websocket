@@ -403,7 +403,7 @@ struct bqws_socket {
 	bqws_msg_queue recv_queue;
 	bqws_msg_queue send_queue;
 
-	// -- State of the socket, errors 
+	// -- State of the socket, errors
 	struct {
 		bqws_mutex mutex;
 
@@ -430,7 +430,7 @@ struct bqws_socket {
 		// Priority messages
 		bqws_msg_imp *close_to_send;
 		bqws_msg_imp *pong_to_send;
-	
+
 	} state;
 
 	// -- Allocation
@@ -1791,7 +1791,7 @@ static bool ws_read_data(bqws_socket *ws, bqws_io_recv_fn recv_fn, void *user)
 			size_t header_size = 2;
 
 			// MASK bit set: contains 32-bit mask field
-			if (mask_len & 0x80) header_size += 4; 
+			if (mask_len & 0x80) header_size += 4;
 
 			// 16/64-bit message length
 			if (len == 126) header_size += 2;
@@ -2122,7 +2122,7 @@ static bool ws_write_data(bqws_socket *ws, bqws_io_send_fn *send_fn, void *user)
 			if (!ws->io.client_handshake_done) {
 				if (!ws_write_handshake(ws, send_fn, user)) return false;
 
-				// Re-use the handshake buffer for the response, 
+				// Re-use the handshake buffer for the response,
 				ws->io.handshake.size = 0;
 				ws->io.client_handshake_done = true;
 			}
@@ -2690,7 +2690,7 @@ bqws_client_opts *bqws_server_get_client_opts(bqws_socket *ws)
 	bqws_assert(ws && ws->magic == BQWS_SOCKET_MAGIC);
 	bqws_assert(ws->is_server);
 	// no-mutex(state): There's an inherent race condition with multiple accepts
-	bqws_assert(ws->state.state == BQWS_STATE_CONNECTING); 
+	bqws_assert(ws->state.state == BQWS_STATE_CONNECTING);
 
 	bqws_mutex_lock(&ws->io.mutex);
 	bqws_client_opts *opts = ws->io.opts_from_client;

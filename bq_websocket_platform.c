@@ -113,7 +113,7 @@ typedef struct {
 	// Packed zero separated url + protocols
 	size_t num_protocols;
 	size_t connect_data_size;
-	char *connect_data; 
+	char *connect_data;
 
 	bqws_allocator allocator;
 
@@ -1374,13 +1374,13 @@ static void cf_free(pt_cf *cf)
 static size_t cf_send(pt_cf *cf, const void *data, size_t size)
 {
     if (size == 0) return 0;
-    
+
     switch (CFWriteStreamGetStatus(cf->write)) {
         case kCFStreamStatusOpening: return 0;
         case kCFStreamStatusError: case kCFStreamStatusClosed: return SIZE_MAX;
         default: if (!CFWriteStreamCanAcceptBytes(cf->write)) return 0;
     }
-    
+
     if (!cf->set_nonblocking) {
         cf->set_nonblocking = true;
         CFDataRef socket_data = (CFDataRef)CFWriteStreamCopyProperty(cf->write, kCFStreamPropertySocketNativeHandle);
@@ -1394,7 +1394,7 @@ static size_t cf_send(pt_cf *cf, const void *data, size_t size)
             CFRelease(socket_data);
         }
     }
-    
+
     CFIndex res = CFWriteStreamWrite(cf->write, (const UInt8*)data, size);
     if (res < 0) return SIZE_MAX;
     return (size_t)res;
@@ -1409,7 +1409,7 @@ static size_t cf_recv(pt_cf *cf, void *data, size_t max_size)
         case kCFStreamStatusError: case kCFStreamStatusClosed: return SIZE_MAX;
         default: if (!CFReadStreamHasBytesAvailable(cf->read)) return 0;
     }
-    
+
     CFIndex res = CFReadStreamRead(cf->read, (UInt8*)data, (CFIndex)max_size);
     if (res < 0) return SIZE_MAX;
     return (size_t)res;
@@ -1418,38 +1418,38 @@ static size_t cf_recv(pt_cf *cf, void *data, size_t max_size)
 static bool cf_connect(const bqws_url *url, pt_cf *cf)
 {
     CFAllocatorRef ator = kCFAllocatorDefault;
-    
+
     do {
         memset(cf, 0, sizeof(pt_cf));
 
         CFStringRef host_ref = CFStringCreateWithCString(ator, url->host, kCFStringEncodingUTF8);
         CFStreamCreatePairWithSocketToHost(ator, host_ref, url->port, &cf->read, &cf->write);
         CFRelease(host_ref);
-        
+
         if (!cf->read || !cf->write) {
             pt_fail_pt("CFStreamCreatePairWithSocketToHost()", BQWS_PT_ERR_OUT_OF_MEMORY);
             break;
         }
-        
+
         if (url->secure) {
             CFStringRef keys[] = { kCFStreamPropertySocketSecurityLevel };
             CFStringRef values[] = { kCFStreamSocketSecurityLevelTLSv1 };
             CFDictionaryRef dict = CFDictionaryCreate(ator, (const void**)keys, (const void**)values, 1,
                 &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-            
+
             CFWriteStreamSetProperty(cf->write, kCFStreamPropertySSLSettings, dict);
             CFReadStreamSetProperty(cf->read, kCFStreamPropertySSLSettings, dict);
-            
+
             CFRelease(dict);
         }
-        
+
         CFWriteStreamOpen(cf->write);
         CFReadStreamOpen(cf->read);
 
         cf->enabled = true;
         return true;
     } while (false);
-    
+
     if (cf) cf_free(cf);
     return false;
 }
@@ -1457,7 +1457,7 @@ static bool cf_connect(const bqws_url *url, pt_cf *cf)
 static void cf_get_address(pt_cf *cf, bqws_pt_address *address)
 {
     if (!cf->has_address) {
-        
+
         CFDataRef socket_data = (CFDataRef)CFWriteStreamCopyProperty(cf->write, kCFStreamPropertySocketNativeHandle);
         if (socket_data) {
             CFSocketNativeHandle s = -1;
@@ -1792,7 +1792,7 @@ static bqws_pt_address pt_get_address(const bqws_socket *ws)
 	pt_io *io = (pt_io*)bqws_get_io_user(ws);
 	bqws_assert(io && io->magic == BQWS_PT_IO_MAGIC);
     	if (cf_enabled(&io->cf)) cf_get_address(&io->cf, &io->address);
-    
+
 	return io->address;
 }
 
@@ -2029,7 +2029,7 @@ void bqws_pt_get_error_desc(char *dst, size_t size, const bqws_pt_error *err)
 		#if defined(_WIN32)
 		{
 			wchar_t *buf;
-			FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, 
+			FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 				NULL, (DWORD)err->data,
 				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 				(LPWSTR)&buf, 0, NULL);
