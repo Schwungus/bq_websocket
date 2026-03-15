@@ -21,7 +21,7 @@ endif()
 
 # only web builds of `bq_websocket` come with built-in ssl support
 if(NOT CMAKE_SYSTEM_NAME MATCHES "Emscripten")
-    find_package(OpenSSL REQUIRED)
-    target_link_libraries(bq_websocket PRIVATE OpenSSL::SSL OpenSSL::Crypto)
+    find_package(OpenSSL COMPONENTS SSL REQUIRED)
+    target_link_libraries(bq_websocket PRIVATE OpenSSL::SSL)
     target_compile_definitions(bq_websocket PUBLIC BQWS_PT_USE_OPENSSL=1)
 endif()
