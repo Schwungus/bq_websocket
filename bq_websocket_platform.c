@@ -1154,6 +1154,7 @@ static bool tls_init_client(pt_tls *tls, os_socket s, const bqws_pt_connect_opts
 	tls->ssl = SSL_new(g_tls.client_ctx);
 	if (!tls->ssl) return false;
 
+	// HACK: https://stackoverflow.com/a/78097720
 	SSL_set_tlsext_host_name(tls->ssl, client_opts->host);
 
 	BIO *bio = BIO_new_socket((int)s, 0);
